@@ -42,5 +42,6 @@ Chromium isn't installed, set `SITE_KIT_CHROMIUM` to a Chromium binary.
 ## Releasing
 
 1. Update `version` in `package.json` and add a section to `CHANGELOG.md`.
-2. Merge to `master`, then tag `vX.Y.Z` on that commit and push the tag.
+2. Merge to `master`. The Release workflow tags `vX.Y.Z` and publishes the
+   release notes from the changelog.
 3. In each site, bump the dependency to the new tag and run its validation.

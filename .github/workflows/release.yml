@@ -1,0 +1,37 @@
+# Tags and releases each new package.json version merged to master as
+# vX.Y.Z, so sites can pin `github:gmax9803/site-kit#vX.Y.Z`. Notes come from
+# the matching CHANGELOG.md section.
+name: Release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-tags: true
+
+      - name: Release the package.json version if it is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(jq -r .version package.json)
+          tag="v${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "$tag is already released; nothing to do."
+            exit 0
+          fi
+          awk -v v="$version" '$0 == "## " v {found=1; next} /^## / && found {exit} found' CHANGELOG.md > notes.md
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file notes.md
