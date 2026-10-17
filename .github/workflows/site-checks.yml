@@ -2,7 +2,7 @@
 #
 #   jobs:
 #     checks:
-#       uses: gmax9803/site-kit/.github/workflows/site-checks.yml@v0.1.0
+#       uses: gmax9803/site-kit/.github/workflows/site-checks.yml@v0.1.1
 #
 # It installs with the site's pinned pnpm and Node versions, downloads
 # Chromium, runs the site's `validate` script (which must build the site and

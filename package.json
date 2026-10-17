@@ -1,6 +1,6 @@
 {
   "name": "@gmax9803/site-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared Astro components, UI rules, agent skills and site checks for gmax9803's sites.",
   "type": "module",
   "private": true,

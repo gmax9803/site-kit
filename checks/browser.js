@@ -28,8 +28,17 @@ function auditFormFields(kinds) {
 	};
 
 	for (const input of document.querySelectorAll('input:not([type=hidden]), textarea')) {
-		const hint = [input.name, input.id, input.getAttribute('autocomplete')].filter(Boolean).join(' ');
-		const kind = kinds.find((k) => new RegExp(k.pattern.source, k.pattern.flags).test(hint));
+		// Skip fields people never see, such as spam honeypots.
+		if (!input.checkVisibility()) continue;
+
+		// A specific autocomplete token is the author's statement of what the
+		// field holds; html-validate checks it against the type. Only guess
+		// from the name or id when there is none.
+		const autocomplete = (input.getAttribute('autocomplete') ?? '').trim().toLowerCase();
+		const declared = autocomplete && autocomplete !== 'on' && autocomplete !== 'off';
+		const kind = declared
+			? kinds.find((k) => autocomplete.split(/\s+/).includes(k.autocomplete))
+			: kinds.find((k) => new RegExp(k.pattern.source, k.pattern.flags).test(`${input.name} ${input.id}`));
 		if (!kind) continue;
 
 		const type = input.localName === 'textarea' ? 'textarea' : input.type;
@@ -40,7 +49,7 @@ function auditFormFields(kinds) {
 				message: `Collects ${kind.kind} but is type="${type}". Use type="${kind.type}" so phones show the right keyboard.`,
 			});
 		}
-		if (!input.getAttribute('autocomplete')) {
+		if (!declared && autocomplete !== 'off') {
 			findings.push({
 				level: 'warning',
 				target: describe(input),

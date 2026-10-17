@@ -6,6 +6,17 @@
 		<title>About</title>
 	</head>
 	<body>
-		<main><h1>About</h1><p>Fine.</p></main>
+		<main>
+			<h1>About</h1>
+			<form>
+				<label for="cell">Cell number</label>
+				<input id="cell" name="cell" type="text" inputmode="tel" autocomplete="tel-national" />
+				<div hidden>
+					<label for="website">Leave empty</label>
+					<input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+				</div>
+				<button type="submit">Send</button>
+			</form>
+		</main>
 	</body>
 </html>

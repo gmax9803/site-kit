@@ -3,9 +3,12 @@
 //
 //   site-kit check [--dist dist] [--widths 360,1280] [--pages /,/about/]
 //                  [--report site-kit-report] [--no-browser] [--no-screenshots]
+//                  [--update-baseline]
 //   site-kit install-browser    (CI: download the Chromium the checks use)
 //
-// Exits 1 when any check reports an error. Warnings are printed but pass.
+// Exits 1 when any check reports an error that isn't in the site's
+// site-kit-baseline.json. Warnings and known (baselined) errors are printed
+// but pass.
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { readdir } from 'node:fs/promises';
@@ -15,6 +18,7 @@ import { parseArgs } from 'node:util';
 import { checkHtml } from '../checks/html.js';
 import { serveDist } from '../checks/server.js';
 import { urlPathFor } from '../checks/pages.js';
+import { BASELINE_FILE, applyBaseline, readBaseline, writeBaseline } from '../checks/baseline.js';
 
 const USAGE = `Usage: site-kit check [options]
        site-kit install-browser
@@ -24,7 +28,8 @@ const USAGE = `Usage: site-kit check [options]
   --pages <list>      URL paths to check (default: every built page)
   --report <dir>      Where screenshots go (default: site-kit-report)
   --no-browser        Only run the static HTML checks
-  --no-screenshots    Skip saving screenshots`;
+  --no-screenshots    Skip saving screenshots
+  --update-baseline   Record today's errors in ${BASELINE_FILE} as known`;
 
 const listHtml = async (dir) => {
 	const entries = await readdir(dir, { recursive: true, withFileTypes: true });
@@ -39,7 +44,7 @@ const print = (findings) => {
 	for (const [page, items] of byPage) {
 		console.log(`\n${page}`);
 		for (const item of items) {
-			const mark = item.level === 'error' ? '✗' : '!';
+			const mark = { error: '✗', warning: '!', known: '~' }[item.level];
 			console.log(`  ${mark} [${item.check}] ${item.message}`);
 			if (item.target) console.log(`      at ${item.target}`);
 		}
@@ -70,6 +75,7 @@ const main = async () => {
 			report: { type: 'string', default: 'site-kit-report' },
 			'no-browser': { type: 'boolean', default: false },
 			'no-screenshots': { type: 'boolean', default: false },
+			'update-baseline': { type: 'boolean', default: false },
 		},
 	});
 
@@ -105,10 +111,22 @@ const main = async () => {
 		}
 	}
 
+	const baselineFile = path.resolve(BASELINE_FILE);
+	if (values['update-baseline']) {
+		const count = await writeBaseline(baselineFile, findings);
+		console.log(`\nRecorded ${count} known error(s) in ${BASELINE_FILE}.`);
+		process.exit(0);
+	}
+
+	const fixed = applyBaseline(findings, await readBaseline(baselineFile));
 	print(findings);
-	const errors = findings.filter((finding) => finding.level === 'error').length;
-	const warnings = findings.length - errors;
-	console.log(`\n${errors} error(s), ${warnings} warning(s)`);
+
+	const count = (level) => findings.filter((finding) => finding.level === level).length;
+	const errors = count('error');
+	console.log(`\n${errors} error(s), ${count('warning')} warning(s), ${count('known')} known error(s) from ${BASELINE_FILE}`);
+	if (fixed.length) {
+		console.log(`${fixed.length} known error(s) no longer occur. Run \`site-kit check --update-baseline\` to remove them.`);
+	}
 	process.exit(errors ? 1 : 0);
 };
 

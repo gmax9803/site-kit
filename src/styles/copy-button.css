@@ -1,6 +1,7 @@
 /*
- * CopyButton. Every selector is wrapped in :where() so a site's own button
- * classes (passed through `class`) override these without specificity fights.
+ * CopyButton. Selectors are wrapped in :where() so a site's own button
+ * classes (passed through `class`) override them without specificity fights.
+ * The copied and failed colors are the one exception.
  */
 @import './tokens.css';
 
@@ -46,11 +47,13 @@
 	outline-offset: var(--sk-focus-offset);
 }
 
-:where(.sk-copy[data-copy-state='copied']) {
+/* State colors keep their specificity so a site's base button color can't
+ * hide the feedback. Override them through the tokens instead. */
+.sk-copy[data-copy-state='copied'] {
 	color: var(--sk-color-success);
 }
 
-:where(.sk-copy[data-copy-state='failed']) {
+.sk-copy[data-copy-state='failed'] {
 	color: var(--sk-color-danger);
 }
 

@@ -20,7 +20,7 @@ interface Props {
 	text?: string;
 	copiedText?: string;
 	failedText?: string;
-	/** If set and copying fails, show a prompt with this message so the visitor can copy by hand. */
+	/** If set and copying fails, show a prompt with this message so the visitor can copy by hand (instead of the failed state). */
 	promptText?: string;
 	resetMs?: number;
 	class?: string;
@@ -64,7 +64,7 @@ if (!text && !label) {
 		<span class="sk-copy__text">
 			<span aria-hidden="true">{text}</span>
 			<span aria-hidden="true">{copiedText}</span>
-			<span aria-hidden="true">{failedText}</span>
+			{!promptText && <span aria-hidden="true">{failedText}</span>}
 			<span class="sk-copy__status" data-sk-copy-status aria-live="polite">{text}</span>
 		</span>
 	) : (

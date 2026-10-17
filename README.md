@@ -16,7 +16,7 @@ The demo page in `demo/` shows every component in every state.
 1. Install a tagged version:
 
    ```bash
-   pnpm add -D github:gmax9803/site-kit#v0.1.0
+   pnpm add -D github:gmax9803/site-kit#v0.1.1
    ```
 
 2. Map the tokens once in the site's global stylesheet (see [`docs/TOKENS.md`](docs/TOKENS.md)).
@@ -47,8 +47,13 @@ The demo page in `demo/` shows every component in every state.
        branches: [master]
    jobs:
      checks:
-       uses: gmax9803/site-kit/.github/workflows/site-checks.yml@v0.1.0
+       uses: gmax9803/site-kit/.github/workflows/site-checks.yml@v0.1.1
    ```
+
+   Adopting the checks on a site with existing problems? Run
+   `site-kit check --update-baseline` once to record them in
+   `site-kit-baseline.json`. They then show as known and pass, any new error
+   still fails, and the run tells you when a known one is fixed.
 
 6. Point agents at the shared rules from the site's `AGENTS.md`:
 

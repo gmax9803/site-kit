@@ -20,7 +20,8 @@ that site bumps the tag.
 - Components are plain Astro with no framework and no build step. Scripts are
   plain JavaScript modules.
 - Components style themselves only with `--sk-*` tokens, and every selector in
-  their CSS is wrapped in `:where()` so sites can override it.
+  their CSS is wrapped in `:where()` so sites can override it. State feedback
+  (copied, failed, error) keeps normal specificity so a site class cannot hide it.
 - Every visible string is a prop with an English default. Sites translate.
 - A new component gets an entry on the demo page (`demo/src/pages/index.astro`)
   in each of its states, and a test in `tests/`.
