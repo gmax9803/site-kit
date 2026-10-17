@@ -1,0 +1,43 @@
+{
+  "name": "@gmax9803/site-kit",
+  "version": "0.1.0",
+  "description": "Shared Astro components, UI rules, agent skills and site checks for gmax9803's sites.",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=24.22.0"
+  },
+  "keywords": [
+    "astro-component"
+  ],
+  "exports": {
+    "./components/*": "./src/components/*",
+    "./scripts/*": "./src/scripts/*",
+    "./styles/*": "./src/styles/*"
+  },
+  "bin": {
+    "site-kit": "./bin/site-kit.js"
+  },
+  "files": [
+    "bin",
+    "checks",
+    "docs",
+    "skills",
+    "src",
+    "AGENTS.md"
+  ],
+  "scripts": {
+    "demo:build": "pnpm --dir demo run build",
+    "test": "node --test tests/*.test.js",
+    "validate": "pnpm run demo:build && pnpm run test && node bin/site-kit.js check --dist demo/dist"
+  },
+  "peerDependencies": {
+    "astro": ">=6.0.0"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "html-validate": "^11.16.0",
+    "playwright-core": "^1.63.0"
+  }
+}

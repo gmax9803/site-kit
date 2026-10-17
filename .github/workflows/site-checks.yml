@@ -1,0 +1,54 @@
+# Reusable CI for sites that use site-kit. In a site repo:
+#
+#   jobs:
+#     checks:
+#       uses: gmax9803/site-kit/.github/workflows/site-checks.yml@v0.1.0
+#
+# It installs with the site's pinned pnpm and Node versions, downloads
+# Chromium, runs the site's `validate` script (which must build the site and
+# run `site-kit check`), and uploads the screenshots for review.
+name: Site checks
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: Script that builds the site and runs every check.
+        type: string
+        default: pnpm run validate
+      node-version-file:
+        description: File that pins the Node.js version.
+        type: string
+        default: .node-version
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ${{ inputs.node-version-file }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium for site-kit check
+        run: pnpm exec site-kit install-browser --with-deps
+
+      - run: ${{ inputs.command }}
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-kit-report
+          path: site-kit-report/
+          if-no-files-found: ignore
+          retention-days: 14

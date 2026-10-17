@@ -1,0 +1,13 @@
+{
+  "name": "site-kit-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  },
+  "dependencies": {
+    "@gmax9803/site-kit": "link:..",
+    "astro": "^7.2.0"
+  }
+}

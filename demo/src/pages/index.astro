@@ -1,0 +1,79 @@
+---
+// Kitchen sink: every kit component in every state. `site-kit check` runs
+// against this page in the kit's own CI, so a component is verified here once
+// instead of separately in each site.
+import CopyButton from '@gmax9803/site-kit/components/CopyButton.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>site-kit components</title>
+		<style>
+			body {
+				max-width: 40rem;
+				margin: 0 auto;
+				padding: var(--sk-space-5) var(--sk-space-4);
+				font-family: system-ui, sans-serif;
+				line-height: 1.5;
+			}
+
+			.row {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: var(--sk-space-3);
+			}
+
+			.demo-button {
+				min-block-size: var(--sk-target-min);
+				padding: var(--sk-space-2) var(--sk-space-4);
+				border: 1px solid currentColor;
+				border-radius: 999px;
+				background: transparent;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>site-kit components</h1>
+
+			<h2>CopyButton</h2>
+
+			<h3>Icon only, literal value</h3>
+			<p class="row">
+				<code id="demo-email">hello@example.com</code>
+				<CopyButton value="hello@example.com" label="Copy email address" data-testid="icon-value" />
+			</p>
+
+			<h3>Icon only, copies a target element</h3>
+			<p class="row">
+				<code id="demo-fingerprint">ABCD 1234 EF56 7890</code>
+				<CopyButton target="#demo-fingerprint" label="Copy fingerprint" data-testid="icon-target" />
+			</p>
+
+			<h3>Visible text, site button class</h3>
+			<p class="row">
+				<CopyButton
+					class="demo-button"
+					value={"Line one\nLine two"}
+					text="Copy contact"
+					copiedText="Copied!"
+					data-testid="text-value"
+				/>
+			</p>
+
+			<h3>Value set at runtime</h3>
+			<p class="row">
+				<CopyButton class="demo-button" text="Copy page URL" data-testid="runtime" id="runtime-copy" />
+			</p>
+		</main>
+
+		<script>
+			const button = document.querySelector<HTMLButtonElement>('#runtime-copy');
+			if (button) button.dataset.copy = window.location.href;
+		</script>
+	</body>
+</html>

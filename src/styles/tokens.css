@@ -1,0 +1,42 @@
+/*
+ * Site-kit token contract.
+ *
+ * Kit components read only these --sk-* custom properties. Each site maps its
+ * own palette onto them (see docs/TOKENS.md); anything left unset falls back
+ * to the neutral defaults below. Zero specificity, so any site rule wins.
+ */
+:where(:root) {
+	--sk-color-text: currentColor;
+	--sk-color-muted: color-mix(in srgb, currentColor 65%, transparent);
+	--sk-color-accent: #1f5f8b;
+	--sk-color-success: #1d7a3e;
+	--sk-color-danger: #b42318;
+	--sk-color-surface-hover: color-mix(in srgb, currentColor 8%, transparent);
+	--sk-focus-ring: 2px solid var(--sk-color-accent);
+	--sk-focus-offset: 2px;
+
+	--sk-radius-sm: 4px;
+	--sk-motion-fast: 160ms;
+	--sk-ease: ease;
+
+	/* Spacing scale: use these steps instead of one-off values. */
+	--sk-space-1: 0.25rem;
+	--sk-space-2: 0.5rem;
+	--sk-space-3: 0.75rem;
+	--sk-space-4: 1rem;
+	--sk-space-5: 1.5rem;
+	--sk-space-6: 2rem;
+	--sk-space-7: 3rem;
+
+	/* Smallest comfortable hit area for any control (WCAG 2.5.8 asks for 24px). */
+	--sk-target-min: 2.75rem;
+}
+
+.sk-visually-hidden {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
+}

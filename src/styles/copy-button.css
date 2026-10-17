@@ -1,0 +1,108 @@
+/*
+ * CopyButton. Every selector is wrapped in :where() so a site's own button
+ * classes (passed through `class`) override these without specificity fights.
+ */
+@import './tokens.css';
+
+:where(.sk-copy) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sk-space-2);
+	font: inherit;
+	cursor: pointer;
+	transition:
+		color var(--sk-motion-fast) var(--sk-ease),
+		background-color var(--sk-motion-fast) var(--sk-ease),
+		border-color var(--sk-motion-fast) var(--sk-ease);
+}
+
+:where(.sk-copy--icon) {
+	position: relative;
+	inline-size: 1.5rem;
+	block-size: 1.5rem;
+	padding: 0;
+	border: 0;
+	border-radius: var(--sk-radius-sm);
+	background: transparent;
+	color: var(--sk-color-muted);
+	line-height: 0;
+}
+
+/* Grow the hit area of small icon buttons without changing their layout. */
+:where(.sk-copy--icon)::after {
+	position: absolute;
+	inset: -0.25rem;
+	content: '';
+}
+
+:where(.sk-copy--icon:hover, .sk-copy--icon:focus-visible) {
+	background: var(--sk-color-surface-hover);
+	color: var(--sk-color-accent);
+}
+
+:where(.sk-copy:focus-visible) {
+	outline: var(--sk-focus-ring);
+	outline-offset: var(--sk-focus-offset);
+}
+
+:where(.sk-copy[data-copy-state='copied']) {
+	color: var(--sk-color-success);
+}
+
+:where(.sk-copy[data-copy-state='failed']) {
+	color: var(--sk-color-danger);
+}
+
+/* Stack every label in one grid cell so the button keeps its widest width. */
+:where(.sk-copy__text) {
+	display: grid;
+}
+
+:where(.sk-copy__text > span) {
+	grid-area: 1 / 1;
+}
+
+:where(.sk-copy__text > [aria-hidden='true']) {
+	visibility: hidden;
+}
+
+:where(.sk-copy__icons) {
+	position: relative;
+	flex: none;
+	inline-size: 1em;
+	block-size: 1em;
+}
+
+:where(.sk-copy__icon) {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+	transition:
+		opacity var(--sk-motion-fast) var(--sk-ease),
+		transform var(--sk-motion-fast) var(--sk-ease);
+}
+
+:where(.sk-copy__icon--done, .sk-copy__icon--failed),
+:where(.sk-copy[data-copy-state] .sk-copy__icon--copy) {
+	opacity: 0;
+	transform: scale(0.65);
+}
+
+:where(.sk-copy[data-copy-state='copied'] .sk-copy__icon--done),
+:where(.sk-copy[data-copy-state='failed'] .sk-copy__icon--failed) {
+	opacity: 1;
+	transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:where(.sk-copy, .sk-copy__icon) {
+		transition: none;
+	}
+}

@@ -1,0 +1,89 @@
+---
+// A button that copies text and confirms with a check mark.
+//
+// Pass the text with `value`, or a `target` selector whose value or text
+// content is copied. For text only known in the browser, leave both out and
+// set `button.dataset.copy` from a page script.
+//
+// With `text`, the button shows a visible label that swaps to `copiedText`
+// without changing width. Without `text` it is icon-only, so `label` is
+// required as its accessible name. Styling comes from the --sk-* tokens in
+// styles/tokens.css; pass `class` to add the site's own button classes.
+import '../styles/copy-button.css';
+
+interface Props {
+	/** Accessible name. Required for icon-only buttons; must contain `text` when both are set. */
+	label?: string;
+	value?: string;
+	target?: string;
+	/** Visible label. Omit for an icon-only button. */
+	text?: string;
+	copiedText?: string;
+	failedText?: string;
+	/** If set and copying fails, show a prompt with this message so the visitor can copy by hand. */
+	promptText?: string;
+	resetMs?: number;
+	class?: string;
+	[key: `data-${string}`]: string | undefined;
+}
+
+const {
+	label,
+	value,
+	target,
+	text,
+	copiedText = 'Copied',
+	failedText = 'Copy failed',
+	promptText,
+	resetMs,
+	class: className,
+	...rest
+} = Astro.props;
+
+if (!text && !label) {
+	throw new Error('CopyButton: an icon-only button needs a `label`.');
+}
+---
+
+<button
+	type="button"
+	class:list={['sk-copy', text ? 'sk-copy--text' : 'sk-copy--icon', className]}
+	aria-label={label}
+	data-sk-copy
+	data-copy={value}
+	data-copy-target={target}
+	data-idle-text={text ?? ''}
+	data-copied-text={copiedText}
+	data-failed-text={failedText}
+	data-copy-prompt={promptText}
+	data-reset-ms={resetMs}
+	data-has-text={text ? 'true' : undefined}
+	{...rest}
+>
+	{text ? (
+		<span class="sk-copy__text">
+			<span aria-hidden="true">{text}</span>
+			<span aria-hidden="true">{copiedText}</span>
+			<span aria-hidden="true">{failedText}</span>
+			<span class="sk-copy__status" data-sk-copy-status aria-live="polite">{text}</span>
+		</span>
+	) : (
+		<span class="sk-visually-hidden" data-sk-copy-status aria-live="polite"></span>
+	)}
+	<span class="sk-copy__icons" aria-hidden="true">
+		<svg class="sk-copy__icon sk-copy__icon--copy" viewBox="0 0 24 24">
+			<rect width="13" height="13" x="9" y="9" rx="2"></rect>
+			<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+		</svg>
+		<svg class="sk-copy__icon sk-copy__icon--done" viewBox="0 0 24 24">
+			<path d="M20 6 9 17l-5-5"></path>
+		</svg>
+		<svg class="sk-copy__icon sk-copy__icon--failed" viewBox="0 0 24 24">
+			<path d="M18 6 6 18M6 6l12 12"></path>
+		</svg>
+	</span>
+</button>
+
+<script>
+	import '../scripts/copy-button.js';
+</script>
